@@ -6,21 +6,21 @@ import androidx.activity.ComponentActivity // // Impor kelas dasar untuk Activit
 import androidx.activity.compose.setContent // // Impor KUNCI: Fungsi untuk "menggambar" UI Compose
 import androidx.compose.foundation.layout.Column // // Impor Composable 'Column' (tata letak vertikal)
 import androidx.compose.foundation.layout.fillMaxSize // // Impor modifier '.fillMaxSize()'
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.padding // // Impor modifier '.padding()'
 import androidx.compose.foundation.lazy.LazyRow // // Impor Composable 'LazyRow' (daftar horizontal efisien)
 import androidx.compose.foundation.lazy.items // // Impor fungsi 'items' untuk looping di dalam LazyRow
 import androidx.compose.foundation.rememberScrollState // // Impor fungsi untuk "mengingat" posisi scroll
 import androidx.compose.foundation.verticalScroll // // Impor modifier '.verticalScroll()'
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3Api // // Impor anotasi untuk API Material 3 yang masih eksperimental
 import androidx.compose.material3.MaterialTheme // // Impor tema (warna, font)
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Scaffold // // Impor Composable 'Scaffold' (struktur layout utama)
 import androidx.compose.material3.Surface // // Impor Composable 'Surface' (kanvas dasar UI)
 import androidx.compose.runtime.Composable // // Impor anotasi wajib '@Composable'
 import androidx.compose.ui.Modifier // // Impor 'Modifier' untuk mengubah Composable
 import androidx.compose.ui.tooling.preview.Devices // // Impor untuk Pratinjau (Preview)
 import androidx.compose.ui.tooling.preview.Preview // // Impor anotasi '@Preview'
 import androidx.compose.ui.unit.dp
-import com.gunder.market.component.BottomBar
+import com.gunder.market.component.BottomBar // // Impor Composable 'BottomBar'
 import com.gunder.market.component.MainBannerVertical // // Impor Composable 'MainBannerVertical'
 import com.gunder.market.component.MainCardCategory // // Impor Composable 'MainCardCategory' dari file component
 import com.gunder.market.component.MainImageCategory // // Impor Composable 'MainImageCategory' dari file component
@@ -53,15 +53,30 @@ class MainActivity : ComponentActivity() { // // Kelas Activity utama (layar) An
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class) // // Anotasi: Diperlukan karena 'Scaffold' masih eksperimental
 @Composable // // Anotasi: Menandakan 'MarketApp' adalah fungsi UI
 fun MarketApp(modifier: Modifier = Modifier) {
-    Scaffold(bottomBar = {BottomBar()}) { paddingValues ->
+    // 'Scaffold' adalah Composable struktur layout utama (seperti blangko).
+    // Ia menyediakan 'slot' (area) untuk topBar, bottomBar, dll.
+    Scaffold(bottomBar = { BottomBar() }) { paddingValues ->
+        // 'bottomBar = { BottomBar() }': Mengisi 'slot' bottomBar dengan Composable 'BottomBar' Anda.
+        // '{ paddingValues ->': Ini adalah 'slot' content (isi utama).
+        // 'paddingValues' adalah padding PENTING yang diberikan Scaffold
+        // agar konten tidak tertutup oleh 'bottomBar'.
+
+        // 'Column' adalah layout utama untuk ISI aplikasi Anda.
+        // Diletakkan DI DALAM content slot 'Scaffold'.
         Column(
+            // 'modifier = modifier': Menerapkan 'modifier' yang datang dari parameter 'MarketApp'
+            // (Catatan: Biasanya modifier ini diterapkan ke 'Scaffold',
+            // dan 'Column' menggunakan 'Modifier' baru)
             modifier = modifier
                 // 'verticalScroll' membuat 'Column' ini bisa di-scroll ke atas/bawah
                 .verticalScroll(rememberScrollState())
-                .padding(paddingValues)// // 'rememberScrollState' untuk menyimpan posisi scroll
+                // 'padding(paddingValues)': INI SANGAT PENTING
+                // Menerapkan padding dari 'Scaffold' agar konten 'Column'
+                // tidak dimulai dari belakang 'BottomBar'.
+                .padding(paddingValues)
         ) {
 
             // --- INI ADALAH SUSUNAN LAYAR ANDA (dari atas ke bawah) ---
@@ -92,6 +107,8 @@ fun MarketApp(modifier: Modifier = Modifier) {
             //  dan mereka akan muncul di bagian bawah)
         }
     }
+    // Komentar-komentar lama di bawah ini tidak lagi relevan
+    // karena 'Column' sekarang ada DI DALAM 'Scaffold'
     // 'Column' adalah layout utama aplikasi Anda.
     // Semua elemen di dalamnya akan disusun secara vertikal (dari atas ke bawah).
 
@@ -110,7 +127,7 @@ fun MainTopMenu(modifier: Modifier = Modifier) { // // Composable untuk daftar m
 
         // 'items(dummyListTopMenus)' adalah "looping" khusus untuk Lazy Composable.
         // Ini akan mengulang blok '{...}' untuk setiap item di dalam 'dummyListTopMenus'.
-        items(dummyListTopMenus){ item -> // // 'item' adalah nama variabel untuk setiap data (bisa juga 'it')
+        items(dummyListTopMenus) { item -> // // 'item' adalah nama variabel untuk setiap data (bisa juga 'it')
 
             // Di dalam loop, kita panggil 'TopMenu' (Composable "cetakan" yg kita buat di file lain)
             // 'listTopMenu = item': Kita "melempar" data 'item' saat ini
@@ -124,7 +141,7 @@ fun MainTopMenu(modifier: Modifier = Modifier) { // // Composable untuk daftar m
 fun MainCategoryTop(modifier: Modifier = Modifier) { // // Composable untuk daftar kategori atas
     LazyRow(modifier = modifier) { // // Membuat daftar horizontal yang efisien
         // 'items(dummyListTopCategory)': Looping data dummy kategori atas
-        items(dummyListTopCategory){ // // 'it' adalah nama default untuk item di dalam loop
+        items(dummyListTopCategory) { // // 'it' adalah nama default untuk item di dalam loop
             // 'MainTopCategory': Composable "cetakan" untuk 1 item kategori
             // 'listTopCategory = it': Melempar data item ke dalam Composable
             MainTopCategory(listTopCategory = it)
@@ -147,7 +164,7 @@ fun MainCategoryBottom(modifier: Modifier = Modifier) { // // Composable untuk d
 fun MainCategoryCard(modifier: Modifier = Modifier) { // // Composable untuk daftar banner horizontal
     LazyRow(modifier = modifier) { // // Membuat daftar horizontal yang efisien
         // 'items(dummyListBanner)': Looping data dummy banner
-        items(dummyListBanner){ // // 'it' adalah item saat ini
+        items(dummyListBanner) { // // 'it' adalah item saat ini
             // 'MainCardCategory': Composable "cetakan" untuk 1 banner
             MainCardCategory(listBanner = it) // // Melempar data item ke Composable
         }
@@ -159,7 +176,7 @@ fun MainCategoryCard(modifier: Modifier = Modifier) { // // Composable untuk daf
 fun MainVerticalBanner(modifier: Modifier = Modifier) { // // Composable untuk daftar banner vertikal
     LazyRow(modifier = modifier) { // // Membuat daftar horizontal yang efisien
         // 'items(dummyListCardForYou)': Looping data dummy banner vertikal
-        items(dummyListCardForYou){ // // 'it' adalah item saat ini
+        items(dummyListCardForYou) { // // 'it' adalah item saat ini
             // 'MainBannerVertical': Composable "cetakan" untuk 1 banner vertikal
             MainBannerVertical(listBanner = it) // // Melempar data item ke Composable
         }
